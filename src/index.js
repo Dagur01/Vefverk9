@@ -73,26 +73,40 @@ function renderResults(location, results) {
     {},
     el('th', {}, 'Tími'),
     el('th', {}, 'Hiti'),
-    el('th', {}, 'Úrkoma'),
+    el('th', {}, 'Úrkoma')
   );
   console.log(results);
-  const body = el(
-    'tr',
-    {},
-    el('td', {}, 'Tími'),
-    el('td', {}, 'Hiti'),
-    el('td', {}, 'Úrkoma'),
-  );
+  const body = el('tbody', {}); // Corrected to 'tbody' for table body
 
-  const resultsTable = el('table', { class: 'forecast' }, header, body);
+  // Iterate over the results and create table rows
+  results.forEach((result) => {
+    //fá klukkutíma
+    const date = new Date(result.time);
+    const hours = date.getHours();
+    const row = el(
+      'tr',
+      {},
+      el('td', {}, `${hours}:00`),
+      el('td', {}, `${result.temperature}°C`),
+      el('td', {}, `${result.precipitation}mm`)
+    );
+    body.appendChild(row);
+  });
+
+  const resultsTable = el(
+    'table',
+    { class: 'forecast', style: 'width: 100%;' },
+    header,
+    body
+  );
 
   renderIntoResultsContent(
     el(
       'section',
       {},
       el('h2', {}, `Leitarniðurstöður fyrir: ${location.title}`),
-      resultsTable,
-    ),
+      resultsTable
+    )
   );
 }
 
@@ -154,11 +168,7 @@ function renderLocationButton(locationTitle, onSearch) {
   const locationElement = el(
     'li',
     { class: 'locations__location' },
-    el(
-      'button',
-      { class: 'locations__button', click: onSearch },
-      locationTitle,
-    ),
+    el('button', { class: 'locations__button', click: onSearch }, locationTitle)
   );
 
   /* Til smanburðar við el fallið ef við myndum nota DOM aðgerðir
@@ -188,11 +198,22 @@ function render(container, locations, onSearch, onSearchMyLocation) {
   // Búum til <header> með beinum DOM aðgerðum
   const headerElement = document.createElement('header');
   const heading = document.createElement('h1');
-  heading.appendChild(document.createTextNode('<fyrirsögn>'));
+  heading.appendChild(document.createTextNode('Veður'));
   headerElement.appendChild(heading);
   parentElement.appendChild(headerElement);
 
   // TODO útfæra inngangstexta
+  const inngangstextaElement = document.createElement('div');
+  inngangstextaElement.classList.add('inngangsTexti');
+  const texti = document.createElement('p');
+  texti.appendChild(
+    document.createTextNode(
+      'Velkomin/n á þessa veðursíðu. Hér er hægt að sjá veðurspá dagsins fyrir eftirfarandi staði:'
+    )
+  );
+  inngangstextaElement.appendChild(texti);
+  parentElement.appendChild(inngangstextaElement);
+
   // Búa til <div class="loctions">
   const locationsElement = document.createElement('div');
   locationsElement.classList.add('locations');
@@ -207,7 +228,7 @@ function render(container, locations, onSearch, onSearchMyLocation) {
   // <div class="loctions"><ul class="locations__list"><li><li><li></ul></div>
   for (const location of locations) {
     const liButtonElement = renderLocationButton(location.title, () => {
-      console.log('Halló!!', location);
+      console.log(location.title, location);
       onSearch(location);
     });
     locationsListElement.appendChild(liButtonElement);
