@@ -190,7 +190,7 @@ function renderLocationButton(locationTitle, onSearch) {
  * @param {(location: SearchLocation) => void} onSearch
  * @param {() => void} onSearchMyLocation
  */
-function render(container, locations, onSearch, onSearchMyLocation) {
+function render(container, locations, onSearch) {
   // Búum til <main> og setjum `weather` class
   const parentElement = document.createElement('main');
   parentElement.classList.add('weather');
